@@ -100,8 +100,8 @@ const useStore = create((set, get) => ({
       set({ notes })
       return notes
     } catch (e) {
-      set({ error: e.message, notes: [] })
-      return []
+      set({ error: e.message })
+      return get().notes
     }
   },
 
@@ -139,8 +139,8 @@ const useStore = create((set, get) => ({
       set({ products })
       return products
     } catch (e) {
-      set({ error: e.message, products: [] })
-      return []
+      set({ error: e.message })
+      return get().products
     }
   },
 

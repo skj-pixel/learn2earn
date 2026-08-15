@@ -46,6 +46,9 @@
 .knowledge-editor table, .markdown-body table { width: 100%; border-collapse: collapse; margin: 20px 0; table-layout: auto; }.knowledge-editor th, .knowledge-editor td, .markdown-body th, .markdown-body td { border: 1px solid #d7dde2; padding: 8px 10px; text-align: left; vertical-align: top; }.knowledge-editor th, .markdown-body th { background: #f4f6f8; font-weight: 650; }.knowledge-editor img { display: block; max-width: 100%; height: auto; margin: 20px auto; border-radius: 4px; }
 .note-context-panel { position: sticky; top: 88px; background: #fff; border: 1px solid #e1e5e9; padding: 20px; font-size: 13px; color: #66707a; line-height: 1.65; }.context-heading { display: flex; align-items: center; gap: 8px; color: #27313b; margin-bottom: 12px; }.context-stat { display: flex; justify-content: space-between; padding: 10px 0; border-top: 1px solid #eef1f3; }.context-stat strong { color: #26313b; }.generate-link { width: 100%; margin-top: 10px; height: 38px; border: 1px solid #137c5a; color: #137c5a; border-radius: 5px; font-weight: 600; }.generate-link:disabled { opacity: .4; }
 .mb-panel { margin-top: 16px; padding-top: 14px; border-top: 1px dashed #e1e5e9; }
+.mb-capabilities { display: flex; flex-wrap: wrap; gap: 8px; margin: 9px 0 4px; font-size: 12px; color: #35413c; }
+.mb-capabilities span { display: inline-flex; align-items: center; gap: 5px; }
+.mb-status-dot { width: 7px; height: 7px; border-radius: 50%; background: #15835f; box-shadow: 0 0 0 3px #dff3ea; }
 .mb-hint { font-size: 12px; color: #8a949e; line-height: 1.6; }
 .mb-scene { display: flex; align-items: baseline; gap: 6px; font-size: 12px; color: #66707a; margin: 8px 0; }
 .mb-scene strong { color: #137c5a; font-size: 15px; }
@@ -366,3 +369,7 @@ body {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
 }
+.mermaid-inline-host { width: 100%; margin-top: 10px; padding: 14px; border: 1px solid #d9e2e8; background: #f8fbfa; }
+.mermaid-inline-diagram { width: 100%; overflow-x: auto; text-align: center; }
+.mermaid-inline-diagram svg { max-width: 100%; height: auto; }
+.mermaid-inline-error { color: #b42318; font-size: 13px; white-space: pre-wrap; }

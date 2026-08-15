@@ -5,9 +5,17 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-$mainRepo = Resolve-Path (Join-Path $PSScriptRoot '..')
+$codeRepo = Resolve-Path (Join-Path $PSScriptRoot '..')
+$sourceRepo = $env:LEARN2EARN_HISTORY_REPO
+if (-not $sourceRepo) {
+  throw 'LEARN2EARN_HISTORY_REPO is required. Start this release from its repository BAT launcher.'
+}
+$sourceRepo = (Resolve-Path -LiteralPath $sourceRepo).Path
 $releaseRoot = Join-Path $env:LOCALAPPDATA "Learn2Earn\release-worktrees\$Version"
-$tagCommit = (& git -C $mainRepo rev-parse "$Tag^{commit}" 2>$null).Trim()
+$versionDataRoot = Join-Path $env:LOCALAPPDATA "Learn2Earn\version-data\$Version"
+$baselineRoot = Join-Path $versionDataRoot 'baseline'
+$runtimeRoot = Join-Path $versionDataRoot 'runtime'
+$tagCommit = (& git -C $codeRepo rev-parse "$Tag^{commit}" 2>$null).Trim()
 if (-not $tagCommit) { throw "Release tag not found: $Tag" }
 
 function Test-Ready([string]$Url) {
@@ -31,7 +39,7 @@ try {
 
   if (-not (Test-Path -LiteralPath (Join-Path $releaseRoot '.git'))) {
     New-Item -ItemType Directory -Path (Split-Path $releaseRoot) -Force | Out-Null
-    & git -C $mainRepo worktree add --detach $releaseRoot $tagCommit
+    & git -C $codeRepo worktree add --detach $releaseRoot $tagCommit
     if ($LASTEXITCODE -ne 0) { throw 'Could not create the fixed release worktree.' }
   }
 
@@ -40,16 +48,20 @@ try {
     throw "The release cache contains a different version. Remove '$releaseRoot' and start again."
   }
 
-  $sitePackages = Join-Path $mainRepo '.venv\Lib\site-packages'
+  $sitePackages = Join-Path $sourceRepo '.venv\Lib\site-packages'
   $basePython = 'D:\anaconda3\python.exe'
   if (-not (Test-Path -LiteralPath $basePython)) { throw "Python not found: $basePython" }
   if (-not (Test-Path -LiteralPath $sitePackages)) { throw 'Prepared Python dependencies are missing in the main repository.' }
 
   $releaseModules = Join-Path $releaseRoot 'frontend\node_modules'
   if (-not (Test-Path -LiteralPath $releaseModules)) {
-    $mainModules = Join-Path $mainRepo 'frontend\node_modules'
-    if (-not (Test-Path -LiteralPath $mainModules)) { throw 'Frontend dependencies are missing in the main repository.' }
-    New-Item -ItemType Junction -Path $releaseModules -Target $mainModules | Out-Null
+    $dependencyModules = Join-Path $codeRepo 'frontend\node_modules'
+    if (-not (Test-Path -LiteralPath (Join-Path $dependencyModules '.bin\vite.cmd'))) {
+      Write-Host "[Learn2Earn $Version] Installing locked frontend dependencies..." -ForegroundColor Cyan
+      & npm.cmd --prefix (Join-Path $codeRepo 'frontend') ci
+      if ($LASTEXITCODE -ne 0) { throw 'Could not install the versioned frontend dependencies.' }
+    }
+    New-Item -ItemType Junction -Path $releaseModules -Target $dependencyModules | Out-Null
   }
 
   $frontendIndex = Join-Path $releaseRoot 'frontend\dist\index.html'
@@ -59,11 +71,36 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Frontend build failed.' }
   }
 
-  $port = 9000..9010 | Where-Object { Test-PortFree $_ } | Select-Object -First 1
-  if ($null -eq $port) { throw 'Ports 9000-9010 are occupied.' }
+  $port = 9000..9199 | Where-Object { Test-PortFree $_ } | Select-Object -First 1
+  if ($null -eq $port) { throw 'Ports 9000-9199 are occupied.' }
   $url = "http://127.0.0.1:$port/"
-  $database = Join-Path $mainRepo 'backend\app\learn2earn.db'
-  if (-not (Test-Path -LiteralPath $database)) { throw "Database not found: $database" }
+  $sourceDatabase = Join-Path $sourceRepo 'backend\app\learn2earn.db'
+  $sourceStorage = Join-Path $sourceRepo 'storage'
+  $sourceLlmConfig = Join-Path $sourceRepo 'backend\app\services\llm_config.json'
+  $baselineDatabase = Join-Path $baselineRoot 'learn2earn.db'
+  $baselineStorage = Join-Path $baselineRoot 'storage'
+  $database = Join-Path $runtimeRoot 'learn2earn.db'
+  $runtimeStorage = Join-Path $runtimeRoot 'storage'
+  $runtimeLlmConfig = Join-Path $runtimeRoot 'llm_config.json'
+  if (-not (Test-Path -LiteralPath $baselineDatabase)) {
+    if (-not (Test-Path -LiteralPath $sourceDatabase)) { throw "Database not found: $sourceDatabase" }
+    New-Item -ItemType Directory -Path $baselineRoot -Force | Out-Null
+    Copy-Item -LiteralPath $sourceDatabase -Destination $baselineDatabase
+    if (Test-Path -LiteralPath $sourceStorage) {
+      Copy-Item -LiteralPath $sourceStorage -Destination $baselineStorage -Recurse
+    } else {
+      New-Item -ItemType Directory -Path $baselineStorage -Force | Out-Null
+    }
+    Get-ChildItem -LiteralPath $baselineRoot -Recurse -Force | ForEach-Object { $_.IsReadOnly = $true }
+  }
+  if (-not (Test-Path -LiteralPath $database)) {
+    New-Item -ItemType Directory -Path $runtimeRoot -Force | Out-Null
+    Copy-Item -LiteralPath $baselineDatabase -Destination $database
+    Copy-Item -LiteralPath $baselineStorage -Destination $runtimeStorage -Recurse
+  }
+  if (-not (Test-Path -LiteralPath $runtimeLlmConfig) -and (Test-Path -LiteralPath $sourceLlmConfig)) {
+    Copy-Item -LiteralPath $sourceLlmConfig -Destination $runtimeLlmConfig
+  }
 
   $arch = $env:PROCESSOR_ARCHITECTURE
   $pythonCode = "import os,platform; platform.machine=lambda:os.environ.get('PROCESSOR_ARCHITECTURE','AMD64'); import uvicorn; uvicorn.run('backend.app.main:app',host='127.0.0.1',port=$port,log_level='warning',lifespan='off')"
@@ -76,6 +113,9 @@ try {
   $startInfo.EnvironmentVariables['PROCESSOR_ARCHITECTURE'] = $arch
   $startInfo.EnvironmentVariables['PYTHONPATH'] = "$sitePackages;$releaseRoot"
   $startInfo.EnvironmentVariables['LEARN2EARN_DATABASE_PATH'] = $database
+  $startInfo.EnvironmentVariables['LEARN2EARN_STORAGE_PATH'] = $runtimeStorage
+  $startInfo.EnvironmentVariables['LEARN2EARN_LLM_CONFIG_PATH'] = $runtimeLlmConfig
+  $startInfo.EnvironmentVariables['LEARN2EARN_LOCAL_DEMO_EMAIL'] = 'kunjunsong@gmail.com'
   $server = [Diagnostics.Process]::Start($startInfo)
   if (-not $server) { throw 'Backend process could not be created.' }
 

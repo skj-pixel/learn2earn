@@ -4,12 +4,8 @@ import { useEffect, useRef, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 // 🔍 [语法] react-markdown
 // 🔍 [作用] 渲染 Markdown 内容
-import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
 // 🔍 [语法] marked + DOMPurify
 // 🔍 [作用] 导出 PDF：Markdown→HTML（消毒后）→打印窗口另存为 PDF
-import { marked } from 'marked'
-import DOMPurify from 'dompurify'
 // 🔍 [语法] 全局 store
 import useStore from '../store/useStore'
 // 🔍 [语法] toast
@@ -20,6 +16,8 @@ import { resolveProductImageMarkers, restoreProductImageMarkers } from '../utils
 // 🔍 [语法] 富文本编辑器（与笔记编辑共用同一个 BlockNote 编辑器）
 // 🔍 [作用] 产品编辑也走 BlockNote 框架，UI 与笔记保持一致
 import RichTextEditor from './RichTextEditor'
+import MathMarkdown from './MathMarkdown'
+import { renderMarkdownForPrint } from '../utils/mathRendering'
 
 // 🔍 [语法] 共享产品类型元数据（名称/图标/配色集中维护，前后端统一）
 import { resolveType, useTypeMap } from '../utils/typeMeta'
@@ -72,7 +70,7 @@ export default function ProductViewer() {
       toast.error('暂无内容可导出')
       return
     }
-    const bodyHtml = DOMPurify.sanitize(marked.parse(product.content))
+    const bodyHtml = renderMarkdownForPrint(product.content)
     const title = (product.title || 'product').replace(/</g, '&lt;')
     const win = window.open('', '_blank')
     if (!win) {
@@ -267,7 +265,7 @@ ${bodyHtml}
           ) : (
             <div className="bg-white rounded-2xl border border-gray-100 p-6 md:p-10 shadow-sm">
               <div className="markdown-body max-w-3xl">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{displayContent || '*暂无内容*'}</ReactMarkdown>
+                <MathMarkdown>{displayContent || '*暂无内容*'}</MathMarkdown>
               </div>
             </div>
           )}

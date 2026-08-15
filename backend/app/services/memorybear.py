@@ -268,7 +268,7 @@ def run_entropy_engine(episodic_items: list[MemoryItem]) -> EntropyReductionRepo
 class MemoryRouterConfig:
     """路由器配置：每层最大条目数 + 总 token 上限。"""
     max_per_layer: dict[str, int] = field(default_factory=lambda: {
-        "perception": 0,    # 本次不实装感知层
+        "perception": 1,
         "working": 1,
         "episodic": 6,
         "explicit": 4,
@@ -355,6 +355,20 @@ def build_memory_context(
 
     items: list[MemoryItem] = []
 
+    # 感知层只表达本次输入中可直接观察到的信号，不持久化、不跨笔记推断。
+    perception_content = (
+        f"当前输入：{note.get('title', '当前笔记')}\n"
+        f"识别标签：{', '.join(note.get('tags') or []) or '无显式标签'}\n"
+        f"学习阶段：{note.get('learning_stage', 'stage1')}"
+    )
+    items.append(MemoryItem(
+        layer="perception",
+        title=note.get("title", "当前笔记"),
+        content=perception_content,
+        timestamp=now,
+        activation=1.0,
+    ))
+
     # ---- 工作记忆：当前笔记主题（始终 1 条）----
     # 注意：工作记忆只放"结构化元数据"（标题/科目/标签/学习阶段），
     # 不放正文全量——正文由生成器的 source_brief（_build_source_memory）单一负责注入，
@@ -417,10 +431,16 @@ def build_memory_context(
     # 工作记忆仅含结构化元数据（标题/科目/阶段/标签/字符数），正文由 source_brief 单独注入，
     # 这里不再重复正文，避免生成时同一笔记内容被双重注入产生重复。
     sections = []
-    if routed:
-        sections.append(f"## 工作记忆（当前主题）\n{routed[0].content}")
-    for item in routed[1:]:
-        sections.append(f"## {item.layer}记忆：{item.title}\n{item.content}")
+    layer_headings = {
+        "perception": "感知记忆（当前输入信号）",
+        "working": "工作记忆（当前主题）",
+        "episodic": "情景记忆",
+        "explicit": "显性记忆",
+        "implicit": "隐性记忆",
+    }
+    for item in routed:
+        heading = layer_headings.get(item.layer, f"{item.layer}记忆")
+        sections.append(f"## {heading}：{item.title}\n{item.content}")
 
     entropy_notes = entropy.notes or (
         [f"情景记忆 {len(episodic_items)} 条，已压缩为 {entropy.merged_groups} 组"]
@@ -437,6 +457,7 @@ def build_memory_context(
 
     meta = {
         "layers": {
+            "perception": sum(1 for i in routed if i.layer == "perception"),
             "working": 1 if any(i.layer == "working" for i in routed) else 0,
             "episodic": sum(1 for i in routed if i.layer == "episodic"),
             "explicit": sum(1 for i in routed if i.layer == "explicit"),
@@ -450,9 +471,14 @@ def build_memory_context(
             "notes": entropy.notes,
         },
         "scene_router": {
+            "mode": "routing_advice",
             "memorybear_weight": scene.memorybear_weight,
             "rag_weight": scene.rag_weight,
             "reason": scene.reason,
+        },
+        "capabilities": {
+            "memorybear": "active",
+            "rag": "on_demand",
         },
     }
     return "\n\n".join(sections)[:10000], meta

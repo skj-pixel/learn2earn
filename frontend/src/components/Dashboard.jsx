@@ -43,8 +43,8 @@ export default function Dashboard() {
   // 🔍 [语法] 解构 stats
   // 🔍 [作用] 显示数据
   const totalValue = stats?.estimated_total_value || 0
-  const productCount = stats?.products || products.length
-  const noteCount = stats?.notes || notes.length
+  const productCount = stats?.products ?? 0
+  const noteCount = stats?.notes ?? 0
 
   return (
     // 🔍 [语法] max-w-6xl mx-auto

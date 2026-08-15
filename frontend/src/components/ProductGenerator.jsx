@@ -55,6 +55,8 @@ export default function ProductGenerator() {
   const [perProductStrategies, setPerProductStrategies] = useState({})
   // 🔍 [作用] 当前正在编辑 per-product strategy 的产品类型（弹窗）
   const [editingProductType, setEditingProductType] = useState(null)
+  const [commonPrompt, setCommonPrompt] = useState('')
+  const [productPrompts, setProductPrompts] = useState({})
 
   // 🔍 [语法] 依赖 [noteId]
   // 🔍 [作用] URL 变化时重新加载
@@ -65,15 +67,17 @@ export default function ProductGenerator() {
     setLoadingSuggestions(true)
     try {
       // 🔍 [语法] Promise.all 并行
-      const [sug, prods, skillRows, strategyRows] = await Promise.all([
+      const [sugResult, productResult, skillResult, strategyResult] = await Promise.allSettled([
         api.ai.suggest(Number(noteId)),
         fetchProducts({ note_id: noteId }),
         api.skills.list(), api.tasks.strategies(),
       ])
-      setSuggestions(sug.suggestions || [])
-      setNoteProducts(prods || [])
-      setSkills((skillRows || []).filter((item) => item.enabled))
-      setStrategies(implementedStrategies(strategyRows))
+      if (sugResult.status === 'fulfilled') setSuggestions(sugResult.value.suggestions || [])
+      if (productResult.status === 'fulfilled') setNoteProducts(productResult.value || [])
+      if (skillResult.status === 'fulfilled') setSkills((skillResult.value || []).filter((item) => item.enabled))
+      if (strategyResult.status === 'fulfilled') setStrategies(implementedStrategies(strategyResult.value))
+      const failures = [sugResult, productResult, skillResult, strategyResult].filter((item) => item.status === 'rejected')
+      if (failures.length) toast.error(`部分数据暂时繁忙，已保留现有内容（${failures.length} 项稍后重试）`)
     } catch (e) {
       toast.error('加载失败: ' + e.message)
     } finally {
@@ -205,6 +209,10 @@ export default function ProductGenerator() {
       algorithms: taskAlgorithms,
       techniques: taskTechniques,
       product_strategies,
+      common_prompt: commonPrompt.trim(),
+      product_prompts: Object.fromEntries(types
+        .map((type) => [type, (productPrompts[type] || '').trim()])
+        .filter(([, value]) => value)),
     }
   }
 
@@ -260,6 +268,10 @@ export default function ProductGenerator() {
       {/* ========== 规划卡片 ========== */}
       <div className="bg-white border border-gray-200 p-5 mb-6">
         <div className="flex items-start justify-between gap-4 mb-4"><div><h2 className="font-semibold text-gray-800">生成策略</h2><p className="text-xs text-gray-500 mt-1">可多选 Skills、算法和质量技术。未选择时使用产品类型默认策略。</p></div><span className="text-xs text-emerald-700 bg-emerald-50 px-2 py-1 rounded">后台执行</span></div>
+        <label className="block mb-4">
+          <span className="block text-xs font-medium text-gray-700 mb-1">公共提示词</span>
+          <textarea value={commonPrompt} onChange={(event) => setCommonPrompt(event.target.value)} rows={3} maxLength={4000} placeholder="适用于本次生成的所有知识付费产品" className="w-full resize-y border border-gray-200 px-3 py-2 text-sm outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100" />
+        </label>
         <div className="mb-4 border border-blue-100 bg-blue-50 px-3 py-2 text-xs leading-5 text-blue-800">图片说明：上传的 Word 若包含图片，生成产品会尽量保留原图；底层大模型只处理文字，不会生成新图片，因此仅提供纯文字材料时，输出也会是纯文字。</div>
         <OptionGroup title="Skills" items={skills.filter((item) => {
           const q = skillQuery.trim().toLowerCase()
@@ -534,6 +546,10 @@ export default function ProductGenerator() {
                               {eff.has_override ? '✏️ 编辑' : '🎚️ 配置'}
                             </button>
                           </div>
+                          <label className="block mt-2">
+                            <span className="block text-[11px] font-medium text-gray-600 mb-1">该产品提示词</span>
+                            <textarea value={productPrompts[t] || ''} onChange={(event) => setProductPrompts((previous) => ({ ...previous, [t]: event.target.value }))} rows={2} maxLength={4000} placeholder={`仅用于${info.name || t}`} className="w-full resize-y border border-gray-200 px-2 py-1.5 text-xs outline-none focus:border-indigo-400" />
+                          </label>
                           <div className="flex flex-wrap gap-1 text-[10px] text-gray-500">
                             {algoNames.length > 0 && <span className="bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded">算法: {algoNames.join('、')}</span>}
                             {techNames.length > 0 && <span className="bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded">质量: {techNames.join('、')}</span>}

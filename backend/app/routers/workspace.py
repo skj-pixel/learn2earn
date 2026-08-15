@@ -30,7 +30,7 @@ from ..services.skill_service import (
 )
 
 router = APIRouter(prefix="/api", tags=["workspace"])
-STORAGE = Path(__file__).resolve().parents[3] / "storage"
+STORAGE = Path(os.environ.get("LEARN2EARN_STORAGE_PATH", Path(__file__).resolve().parents[3] / "storage")).expanduser().resolve()
 ASSETS = STORAGE / "note-assets"
 SKILLS = STORAGE / "skills"
 MAX_DOCX_BYTES = 30 * 1024 * 1024

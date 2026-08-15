@@ -15,6 +15,7 @@ import '@blocknote/mantine/style.css'
 // 🔍 [作用] useEffect 监听文档变化；useRef 保存 editor 实例供父组件保存时直接读取
 import { useEffect, useRef } from 'react'
 import { repairFencedCodeBlocks } from '../utils/editorContent'
+import InlineMermaidPreviews from './InlineMermaidPreviews'
 
 /**
  * 🔍 [作用] 把 BlockNote blocks 转成纯文本（用于 raw_content 字段，供 AI 生成器使用）
@@ -65,6 +66,7 @@ export default function RichTextEditor({ value, onChange, editorRef, valueFormat
   // 🔍 [语法] useRef 容器
   // 🔍 [作用] 让父组件能拿到 editor 实例（保存按钮直接 await editor.blocksToFullHTML(editor.document)）
   const localRef = useRef(null)
+  const shellRef = useRef(null)
   const editor = useCreateBlockNote({
     // 🔍 [空初始内容]
     // [说明] 新建笔记场景；如果有 HTML 内容，组件挂载后通过 tryParseHTMLToBlocks 替换
@@ -118,11 +120,12 @@ export default function RichTextEditor({ value, onChange, editorRef, valueFormat
   }, [value, editor, valueFormat])
 
   return (
-    <div className="editor-shell">
+    <div className="editor-shell" ref={shellRef}>
       {/* 🔍 [语法] BlockNote 视图
           [作用] 完整 UI：toolbar / slash menu / drag handle / block menu
           [自动行为] 截图粘贴 (Ctrl+V 剪贴板图片) → 自动创建 image block；上传走 base64 内嵌 */}
       <BlockNoteView editor={editor} theme="light" />
+      <InlineMermaidPreviews editor={editor} containerRef={shellRef} />
     </div>
   )
 }

@@ -21,7 +21,7 @@
 # 🔍 [作用] 导入 SQLAlchemy 引擎工厂函数，用于创建数据库连接
 # 🔍 [关联] SQLAlchemy 是 Python 最流行的 ORM 库
 # 🔍 [陷阱] 不同数据库需用不同驱动（sqlite/postgresql/mysql）
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, event
 
 # 🔍 [语法] from sqlalchemy.orm import declarative_base, sessionmaker
 # 🔍 [作用] declarative_base 返回 ORM 模型基类；sessionmaker 创建 Session 工厂
@@ -70,6 +70,15 @@ engine = create_engine(
     pool_size=3,
     max_overflow=0,
 )
+
+
+@event.listens_for(engine, "connect")
+def _configure_sqlite_connection(dbapi_connection, _connection_record):
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA journal_mode=WAL")
+    cursor.execute("PRAGMA synchronous=NORMAL")
+    cursor.execute("PRAGMA busy_timeout=30000")
+    cursor.close()
 
 # --------------- 会话工厂 ---------------
 

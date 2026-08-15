@@ -227,24 +227,30 @@ export default function NoteEditor() {
           <div className="context-stat"><span>学习阶段</span><strong>{STAGES.find((item) => item.value === stage)?.label}</strong></div>
           <button className="generate-link" disabled={isNew} onClick={() => navigate(`/notes/${noteId}/generate`)}>进入产品生成中心</button>
           <div className="mb-panel">
-            <div className="context-heading"><Bot size={18} /><strong>MemoryBear 长程记忆</strong></div>
+            <div className="context-heading"><Bot size={18} /><strong>知识增强状态</strong></div>
             {isNew ? (
-              <p className="mb-hint">保存后即可查看 MemoryBear 提取的五层记忆上下文。</p>
+              <p className="mb-hint">保存后显示 Memory Bear 五层记忆状态和 RAG 路由建议。</p>
             ) : mbLoading ? (
               <p className="mb-hint">正在加载记忆上下文…</p>
             ) : mbPreview ? (
               <>
+                <div className="mb-capabilities">
+                  <span><i className="mb-status-dot" />Memory Bear 已启用</span>
+                  <span>RAG 按需检索</span>
+                </div>
                 <div className="mb-scene">
-                  <span>MB 权重</span>
-                  <strong>{Math.round((mbPreview.meta?.scene_router?.memorybear_weight ?? 0) * 100)}%</strong>
+                  <span>路由建议</span>
+                  <strong>Memory Bear {Math.round((mbPreview.meta?.scene_router?.memorybear_weight ?? 0) * 100)}%</strong>
                   <span>· RAG {Math.round((mbPreview.meta?.scene_router?.rag_weight ?? 0) * 100)}%</span>
                 </div>
+                {mbPreview.meta?.scene_router?.reason && <p className="mb-hint">{mbPreview.meta.scene_router.reason}</p>}
                 <div className="mb-layers">
-                  {(Object.entries(mbPreview.meta?.layers ?? {}))
-                    .filter(([, n]) => n > 0)
-                    .map(([k, n]) => (
+                  {['perception', 'working', 'episodic', 'explicit', 'implicit'].map((k) => {
+                    const n = mbPreview.meta?.layers?.[k] ?? 0
+                    return (
                       <span key={k} className="mb-chip">{layerLabel(k)} ×{n}</span>
-                    ))}
+                    )
+                  })}
                 </div>
               </>
             ) : (

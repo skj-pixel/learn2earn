@@ -24,7 +24,7 @@ _CONFIG_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # 🔍 [语法] os.path.join
 # 🔍 [作用] 配置文件完整路径（llm_config.json 与本文件同目录）
-CONFIG_FILE = os.path.join(_CONFIG_DIR, "llm_config.json")
+CONFIG_FILE = os.environ.get("LEARN2EARN_LLM_CONFIG_PATH") or os.path.join(_CONFIG_DIR, "llm_config.json")
 
 
 # =============================================================================

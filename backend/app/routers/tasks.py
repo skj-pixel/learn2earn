@@ -45,6 +45,8 @@ class TaskCreate(BaseModel):
     # 空 dict 表示沿用 task 级默认；后端会做"每个 product_type 自己一套"的合并。
     # 示例：{"article": {"skill_ids": [3], "techniques": ["memorybear"]}, "ppt": {"algorithms": ["chunked_generation"]}}
     product_strategies: dict[str, dict] = {}
+    common_prompt: str = ""
+    product_prompts: dict[str, str] = {}
 
 
 def _decorate_task(task: dict, user: dict) -> dict:
@@ -88,7 +90,13 @@ def create_task(data: TaskCreate, user: dict = Depends(get_current_user)):
         "product_types": data.product_types, "skill_ids": data.skill_ids,
         "algorithms": effective_algorithms,
         "techniques": effective_techniques,
-        "product_strategies": data.product_strategies or {},
+        "product_strategies": {
+            **(data.product_strategies or {}),
+            "__user_prompts__": {
+                "common_prompt": data.common_prompt.strip(),
+                "product_prompts": {key: value.strip() for key, value in data.product_prompts.items() if value.strip()},
+            },
+        },
         "status": "queued", "progress": 0, "current_step": "等待后台执行",
     })
     enqueue_generation(task["id"], user)

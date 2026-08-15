@@ -174,3 +174,13 @@ LICENSE.*.bak
 # PowerShell stray tokens (defensive)
 $null
 
+
+# Backend runtime config (per-user, not for git tracking)
+backend/llm_config.json
+backend/learn2earn.db-shm
+backend/learn2earn.db-wal
+
+
+# User data storage (per-user, not for git tracking)
+/storage
+

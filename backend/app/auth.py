@@ -150,7 +150,7 @@ def _local_user_from_token(token: str) -> dict[str, Any]:
 
     # 🔍 [语法] dict.get(key) 取值（不存在返回 None）
     # 🔍 [作用] 从 payload 取 email；如果没有则视为无效
-    email = data.get("email")
+    email = os.environ.get("LEARN2EARN_LOCAL_DEMO_EMAIL", "").strip() or data.get("email")
     if not email:
         raise HTTPException(status_code=401, detail="登录已过期，请重新登录")
     exp = int(data.get("exp") or 0)

@@ -206,6 +206,14 @@ def _run_task_once(task_id: int, user: dict):
             per_techniques = per_product["techniques"]
             per_skills = _load_selected_skills(user, per_skill_ids) if per_skill_ids else base_skills
             per_prompt = build_skill_prompt(per_skills) if per_skills else prompt
+            prompt_settings = (task.get("product_strategies") or {}).get("__user_prompts__", {})
+            common_prompt = (task.get("common_prompt") or prompt_settings.get("common_prompt") or "").strip()
+            product_prompts = task.get("product_prompts") or prompt_settings.get("product_prompts") or {}
+            product_prompt = str(product_prompts.get(product_type) or "").strip()
+            if common_prompt:
+                per_prompt += f"\n\n## 用户公共生成要求\n{common_prompt}"
+            if product_prompt:
+                per_prompt += f"\n\n## 当前产品专属生成要求\n{product_prompt}"
             per_compat = validate_combination(
                 skill_ids=list(per_skill_ids),
                 algorithms=list(per_algorithms),

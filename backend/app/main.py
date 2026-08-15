@@ -59,7 +59,7 @@ from sqlalchemy.orm import Session
 # 🔍 [作用] 导入同包内的模块（auth / cloud_db / database / routers）
 # 🔍 [陷阱] . 表示当前包（app）；.. 表示上级包
 from .auth import cloud_is_configured, get_current_user
-from .cloud_db import count_rows, sum_product_value
+from .cloud_db import count_rows, sum_product_value, table
 from .database import init_db, get_db
 from .routers import routers
 
@@ -231,22 +231,24 @@ def get_stats(user: dict = Depends(get_current_user)):
     # 🔍 [作用] 统计各表的当前用户数据条数
     # 🔍 [关联] count_rows 是 cloud_db.py 的统一接口（双模式）
     subject_count = count_rows("subjects", user_id)
-    note_count = count_rows("notes", user_id)
-    product_count = count_rows("products", user_id)
+    visible_notes = table("notes", user).list()
+    visible_products = table("products", user).list()
+    note_count = len(visible_notes)
+    product_count = len(visible_products)
 
     # 🔍 [语法] dict 作为额外过滤参数
     # 🔍 [作用] 统计草稿数（status="draft"）
     # 🔍 [陷阱] 云模式用 PostgREST eq 语法；本地模式用 SQLAlchemy filter_by
-    draft_count = count_rows("products", user_id, {"status": "draft"})
+    draft_count = sum(1 for item in visible_products if item.get("status") == "draft")
 
     # 🔍 [语法] 同上
     # 🔍 [作用] 统计已发布数
-    published_count = count_rows("products", user_id, {"status": "published"})
+    published_count = sum(1 for item in visible_products if item.get("status") == "published")
 
     # 🔍 [语法] 函数调用
     # 🔍 [作用] 汇总所有产品的建议售价总和
     # 🔍 [陷阱] 此函数当前对所有用户返回所有产品（未过滤 user_id）
-    total_value = sum_product_value(user_id)
+    total_value = sum(float(item.get("price_suggestion") or 0) for item in visible_products)
 
     # 🔍 [语法] dict 字面量 + f-string + 类型转换
     # 🔍 [作用] 返回统计 JSON

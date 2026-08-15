@@ -50,7 +50,7 @@ export default function ProductLibrary() {
 
   // 🔍 [语法] reduce 累加
   // 🔍 [作用] 总价值
-  const totalValue = products.reduce((sum, p) => sum + (p.price_suggestion || 0), 0)
+  const totalValue = products.reduce((sum, p) => sum + Number(p.price_suggestion || 0), 0)
   // 🔍 [语法] filter 计数
   const publishedCount = products.filter((p) => p.status === 'published').length
 

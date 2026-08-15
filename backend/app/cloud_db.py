@@ -44,18 +44,21 @@ LOCAL_MODELS = {
 }
 
 def _is_transient_database_open_error(exc: Exception) -> bool:
-    return isinstance(exc, OperationalError) and "unable to open database file" in str(exc).lower()
+    message = str(exc).lower()
+    return isinstance(exc, OperationalError) and any(marker in message for marker in (
+        "unable to open database file", "database is locked", "database is busy",
+    ))
 
 
 def _run_local_operation(operation, *, retry_safe: bool = False):
     """Retry transient open failures only for operations without write side effects."""
-    for attempt in range(3):
+    for attempt in range(8):
         try:
             return operation()
         except OperationalError as exc:
-            if not retry_safe or not _is_transient_database_open_error(exc) or attempt == 2:
+            if not retry_safe or not _is_transient_database_open_error(exc) or attempt == 7:
                 raise
-            time.sleep(0.1 * (attempt + 1))
+            time.sleep(min(0.1 * (2 ** attempt), 1.0))
 
 
 # 🔍 [语法] def + f-string
@@ -280,31 +283,33 @@ class LocalTable:
         """Search Skill bodies in SQLite but return metadata only."""
         if self.model is not InstalledSkill:
             raise TypeError("Skill summaries are only available for installed_skills")
-        with SessionLocal() as db:
-            query = db.query(
+        def operation():
+            with SessionLocal() as db:
+                query = db.query(
                 InstalledSkill.id, InstalledSkill.name, InstalledSkill.description,
                 InstalledSkill.category, InstalledSkill.enabled, InstalledSkill.created_at,
                 InstalledSkill.updated_at, func.length(InstalledSkill.instructions).label("instruction_chars"),
-            ).filter(InstalledSkill.user_id == self.user_id)
-            if category:
-                query = query.filter(InstalledSkill.category == category)
-            needle = q.strip().lower()
-            if needle:
-                pattern = f"%{needle}%"
-                query = query.filter(or_(
+                ).filter(InstalledSkill.user_id == self.user_id)
+                if category:
+                    query = query.filter(InstalledSkill.category == category)
+                needle = q.strip().lower()
+                if needle:
+                    pattern = f"%{needle}%"
+                    query = query.filter(or_(
                     func.lower(InstalledSkill.name).like(pattern),
                     func.lower(InstalledSkill.description).like(pattern),
                     func.lower(InstalledSkill.category).like(pattern),
                     func.lower(InstalledSkill.instructions).like(pattern),
-                ))
-            rows = query.order_by(InstalledSkill.updated_at.desc()).all()
-            return [{
+                    ))
+                rows = query.order_by(InstalledSkill.updated_at.desc()).all()
+                return [{
                 "id": row.id, "name": row.name, "description": row.description,
                 "category": row.category, "enabled": row.enabled,
                 "instruction_chars": row.instruction_chars or 0,
                 "created_at": row.created_at.isoformat() if row.created_at else None,
                 "updated_at": row.updated_at.isoformat() if row.updated_at else None,
-            } for row in rows]
+                } for row in rows]
+        return _run_local_operation(operation, retry_safe=True)
 
     # 🔍 [语法] def
     # 🔍 [作用] 单条查询（用 db.get 主键快捷方法）
