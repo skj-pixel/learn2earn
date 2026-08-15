@@ -4,7 +4,7 @@
 >
 > 杭州 AI 教育赛道 · 五层长期记忆 · 14 种产品形态 · 三段式 Agent 流水线
 
-[![Version](https://img.shields.io/badge/version-V5.1.3--Bugfix2-green)](#) [![Backend](https://img.shields.io/badge/backend-FastAPI-009688)](#) [![Frontend](https://img.shields.io/badge/frontend-React%2018-61DAFB)](#) [![Python](https://img.shields.io/badge/python-3.10%2B-3776AB)](#) [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+[![Version](https://img.shields.io/badge/version-V5.1.3--Bugfix2-green)](#) [![Backend](https://img.shields.io/badge/backend-FastAPI-009688)](#) [![Frontend](https://img.shields.io/badge/frontend-React%2018-61DAFB)](#) [![Python](https://img.shields.io/badge/python-3.10%2B-3776AB)](#) [![License: BUSL 1.1](https://img.shields.io/badge/license-BUSL--1.1-orange.svg)](./LICENSE)
 
 ---
 
@@ -192,11 +192,26 @@ npm run dev
 
 ## 许可证
 
-本项目采用 [MIT License](./LICENSE) — 你可以自由使用、修改、分发、商用，**唯一要求**是保留版权声明。
+本项目采用 **[Business Source License 1.1 (BUSL-1.1)](./LICENSE)** — 一种"源代码可见 + 禁止竞争性商用"的许可模式。
 
-由于仓库为 **Private**（仅限受邀协作者），MIT 条款的"自由度"对外部访客无实际意义；但保留 MIT header 有利于：
-- 未来转为 Public 时无需更换 LICENSE
-- 个人项目复盘时无版权摩擦
+**核心条款**：
+
+| 对象 | 是否允许商用 |
+|---|---|
+| **Licensor（skj-pixel）** | ✅ 完整商业权利（可自由修改、闭源、付费授权、嵌入付费产品、企业版授权） |
+| **第三方 — 个人/学习使用** | ✅ 可 fork、学习、内部非商业使用 |
+| **第三方 — Competing Use** | ❌ 禁止（不能拿本项目做商业产品/SaaS/嵌入付费产品/做 Licensor 的竞品） |
+
+**时间锁条款**：
+- 当前的 BUSL-1.1 保护期至 **2080-08-15**（约 54 年）
+- 到期后本项目**自动转为 [Apache License 2.0](./LICENSE)**（永久开源 + 商用）
+- 在保护期内，第三方**商用必须联系 Licensor 取得书面授权**
+
+**商用授权联系方式**：2511694251@qq.com
+
+由于仓库为 **Private**（仅限受邀协作者），BUSL 条款对外部访客无实际意义；但保留 BUSL header 有利于：
+- 未来转为 Public 时协议已生效，无需更换 LICENSE
+- 商业场景谈判（被收购/合作）有现成法律框架
 
 ---
 

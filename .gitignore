@@ -149,3 +149,8 @@ backend/app/services/strategy_preferences.json
 desktop.ini.*
 *.lnk
 
+
+# Backup of overwritten files (kept on disk for safety, not for git)
+*.bak
+LICENSE.*.bak
+
