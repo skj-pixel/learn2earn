@@ -154,3 +154,13 @@ desktop.ini.*
 *.bak
 LICENSE.*.bak
 
+
+# Local push helpers (not for git tracking)
+Ò»¼üÍÆËÍ.bat
+*Ò»¼üÍÆËÍ*.bat
+
+
+# Local push helpers (not for git tracking)
+ä¸€é”®æ¨é€.bat
+*ä¸€é”®æ¨é€*.bat
+
