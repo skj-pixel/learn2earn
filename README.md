@@ -58,6 +58,7 @@ Learn2Earn 是一个面向自学者 / 知识工作者 / 高校学生的 AI 辅�
 ├── migrations/              # Alembic 数据库迁移
 ├── tests_minimal/           # 离线快速测试
 ├── tools/                   # 工具脚本
+├── seed/                    # 首次启动自动加载的演示数据（见下）
 ├── 启动Learn2Earn-V5.1.3统计与并发读取修复版.bat  ← **你点开要用的**
 ├── 启动Learn2Earn本地演示版.bat
 ├── 停止Learn2Earn本地演示版.bat
@@ -114,7 +115,7 @@ cd Learn2Earn
 - 浏览器自动打开 `http://127.0.0.1:<port>/`
 - 窗口保持打开状态，关窗口即停服务
 
-> ⚙️ 启动后 WebUI 直接展示已包含的演示数据：33 个科目 / 30 篇笔记 / 103 个产品 / 40 个生成任务 / 904 条已安装技能记录。无需手动创建样例即可上手测试。
+> ⚙️ **首次启动会自动加载演示数据**：启动脚本检测到 `backend/app/learn2earn.db` 不存在或为空（< 1 MB）时，会自动从 `seed/` 复制演示数据库到运行位置、并解压 `seed/storage.tar.gz` 到 `storage/`、并写入演示用的 `backend/llm_config.json`。加载完成后 WebUI 直接展示 **33 个科目 / 30 篇笔记 / 103 个产品 / 40 个生成任务 / 904 条已安装技能记录**，无需手动创建样例即可上手测试。已经使用过的用户（db 大于 1 MB）不会被覆盖，你自己的数据保留。
 
 ### 5. 配置 LLM（必做）
 
@@ -190,6 +191,27 @@ npm run dev
 - **云模式可选**：在 `backend/app/cloud_db.py` 配置 Supabase / 自托管 PostgREST。
 - **LLM 调用**：所有提示词与笔记内容会发送给所选 LLM provider；**请勿输入敏感个人信息**。
 - **API Key**：默认从 `LEARN2EARN_LLM_API_KEY` 环境变量读取；UI 配置写入 `backend/app/services/llm_config.json`（已加入 .gitignore）。
+
+## 关于 seed/ 目录
+
+仓库根目录下的 `seed/` 是一个**受控的演示数据快照**，用于让任何克隆仓库的访客在第一次双击 `启动Learn2Earn-V5.1.3统计与并发读取修复版.bat` 时就能看到 33 / 30 / 103 / 40 / 904 的真实运行结果，而不是一个空白的 WebUI。
+
+| 文件 | 大小 | 内容 |
+|---|---|---|
+| `seed/learn2earn.db` | 21.5 MB | 真实运行 SQLite 数据库（含 33 科目 / 30 笔记 / 103 产品 / 40 任务 / 904 技能） |
+| `seed/llm_config.json` | < 1 KB | 演示用的 LLM provider 配置（MiniMax + 火山引擎） |
+| `seed/storage.tar.gz` | 60 MB | 用户记忆库、笔记图片、已安装技能包（解压到 `storage/`） |
+| `seed/.env.example` | < 1 KB | 环境变量模板 |
+
+**加载触发条件**（仅在以下情况才会从 `seed/` 复制，不会覆盖你自己的数据）：
+
+- `backend/app/learn2earn.db` 不存在 或 文件大小 < 1 MB（视为空库）
+- `backend/llm_config.json` 不存在
+- `storage/` 目录为空
+
+要重置为出厂演示数据，删除 `backend/app/learn2earn.db`、`backend/llm_config.json`、`storage/` 三个目录后再启动即可。
+
+要使用自己长期积累的数据，**不要**删除上述文件，启动脚本会跳过 seed 加载逻辑。
 
 ---
 

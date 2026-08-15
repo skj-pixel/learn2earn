@@ -62,6 +62,75 @@ $urlFile = Join-Path $projectRoot "learn2earn_local_server.url"
 $env:LEARN2EARN_DATABASE_PATH = Join-Path $projectRoot "backend\app\learn2earn.db"
 Write-Host "[Learn2Earn] Database: $env:LEARN2EARN_DATABASE_PATH"
 
+# ---- Auto-load demo seed when the local data files are missing or empty ----
+# 🔍 [作用] 让任何克隆仓库的人双击启动 .bat 后，第一次启动自动从 seed/ 加载演示数据
+#          （33 科目 / 30 笔记 / 103 产品 / 40 任务 / 904 技能），避免看到空白 WebUI。
+#          已运行过的用户（db 大于 1MB）不会被覆盖，保留他们自己的数据。
+# 🔍 [陷阱] 必须用 -LiteralPath，路径含中文与空格时 -Path 会被当通配符解析
+function Initialize-SeedData {
+  $dbPath = $env:LEARN2EARN_DATABASE_PATH
+  $seedDb = Join-Path $projectRoot "seed\learn2earn.db"
+  $seedLlm = Join-Path $projectRoot "seed\llm_config.json"
+  $seedStorageTar = Join-Path $projectRoot "seed\storage.tar.gz"
+  $storagePath = Join-Path $projectRoot "storage"
+
+  $dbEmpty = $true
+  if (Test-Path -LiteralPath $dbPath) {
+    $dbSize = (Get-Item -LiteralPath $dbPath).Length
+    if ($dbSize -gt 1000000) {
+      $dbEmpty = $false
+    }
+  }
+  if ($dbEmpty) {
+    if (Test-Path -LiteralPath $seedDb) {
+      Write-Host "[Learn2Earn] Empty database detected. Loading demo seed database..."
+      Copy-Item -LiteralPath $seedDb -Destination $dbPath -Force
+      Write-Host "[Learn2Earn] Demo database loaded: 33 subjects / 30 notes / 103 products / 40 generation tasks / 904 installed skills."
+    } else {
+      Write-Host "[Learn2Earn] WARNING: No demo seed found at $seedDb. Database will start empty."
+    }
+  }
+
+  $llmConfigPath = Join-Path $projectRoot "backend\llm_config.json"
+  if (-not (Test-Path -LiteralPath $llmConfigPath)) {
+    if (Test-Path -LiteralPath $seedLlm) {
+      Write-Host "[Learn2Earn] Loading demo LLM config..."
+      Copy-Item -LiteralPath $seedLlm -Destination $llmConfigPath -Force
+    } else {
+      Write-Host "[Learn2Earn] WARNING: No demo LLM config found at $seedLlm. Configure providers in Settings before generating products."
+    }
+  }
+
+  $storageEmpty = $true
+  if (Test-Path -LiteralPath $storagePath) {
+    $entryCount = (Get-ChildItem -LiteralPath $storagePath -Force -ErrorAction SilentlyContinue | Measure-Object).Count
+    if ($entryCount -gt 0) {
+      $storageEmpty = $false
+    }
+  }
+  if ($storageEmpty) {
+    if (Test-Path -LiteralPath $seedStorageTar) {
+      Write-Host "[Learn2Earn] Empty storage detected. Extracting demo storage..."
+      if (-not (Test-Path -LiteralPath $storagePath)) {
+        New-Item -ItemType Directory -Path $storagePath -Force | Out-Null
+      }
+      $tar = (Get-Command tar -ErrorAction SilentlyContinue)
+      if ($tar) {
+        Push-Location $projectRoot
+        & tar -xzf $seedStorageTar -C $storagePath
+        Pop-Location
+        Write-Host "[Learn2Earn] Demo storage extracted."
+      } else {
+        Write-Host "[Learn2Earn] WARNING: tar not available. Run from Git Bash or install Windows 10+ tar to extract demo storage."
+      }
+    } else {
+      Write-Host "[Learn2Earn] WARNING: No demo storage found at $seedStorageTar. Skill marketplace will be empty."
+    }
+  }
+}
+
+Initialize-SeedData
+
 function Select-Python {
   param([switch]$RequirePrepared)
   $candidates = @(
