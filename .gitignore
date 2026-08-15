@@ -164,3 +164,13 @@ LICENSE.*.bak
 一键推送.bat
 *一键推送*.bat
 
+
+# Local environment config (not for git tracking)
+.env
+.env.local
+.env.*.local
+
+
+# PowerShell stray tokens (defensive)
+$null
+

@@ -1,4 +1,4 @@
-@echo off
+﻿@echo off
 chcp 65001 >nul
 setlocal
 title Learn2Earn V5.1.3 Bugfix2
