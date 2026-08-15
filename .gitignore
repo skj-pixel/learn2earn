@@ -139,3 +139,13 @@ Learn2Earn_*.mp4
 # User strategy preferences (per-product-type overrides)
 backend/app/services/strategy_preferences.json
 
+
+# GitHub-only files
+.github/
+# Editor backup
+*.bak~
+*.backup
+# OS thumbnail / metadata
+desktop.ini.*
+*.lnk
+

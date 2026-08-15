@@ -4,7 +4,7 @@
 >
 > 杭州 AI 教育赛道 · 五层长期记忆 · 14 种产品形态 · 三段式 Agent 流水线
 
-[![Version](https://img.shields.io/badge/version-V5.1.3--Bugfix2-green)](#) [![Backend](https://img.shields.io/badge/backend-FastAPI-009688)](#) [![Frontend](https://img.shields.io/badge/frontend-React%2018-61DAFB)](#) [![Python](https://img.shields.io/badge/python-3.10%2B-3776AB)](#)
+[![Version](https://img.shields.io/badge/version-V5.1.3--Bugfix2-green)](#) [![Backend](https://img.shields.io/badge/backend-FastAPI-009688)](#) [![Frontend](https://img.shields.io/badge/frontend-React%2018-61DAFB)](#) [![Python](https://img.shields.io/badge/python-3.10%2B-3776AB)](#) [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
 ---
 
@@ -192,15 +192,17 @@ npm run dev
 
 ## 许可证
 
-私有项目（Private License）。未经作者授权不得商业使用。
+本项目采用 [MIT License](./LICENSE) — 你可以自由使用、修改、分发、商用，**唯一要求**是保留版权声明。
+
+由于仓库为 **Private**（仅限受邀协作者），MIT 条款的"自由度"对外部访客无实际意义；但保留 MIT header 有利于：
+- 未来转为 Public 时无需更换 LICENSE
+- 个人项目复盘时无版权摩擦
 
 ---
 
 ## 致谢
 
 - FastAPI / React / Vite / SQLAlchemy
-- 杭州开源人工智能基金会（GOAI 开放资源）
-- X-CUBE-AI / STM32 / 嵌入式开源社区
 - 所有为 Learn2Earn 提过 PR / 反馈的用户
 
 ---
