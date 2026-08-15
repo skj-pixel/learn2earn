@@ -1,0 +1,62 @@
+[
+  {
+    "name": "登录与鉴权",
+    "status": "PASS",
+    "error": "",
+    "code": "frontend/src/components/AuthGate.jsx:15-145(AuthGate/submit登录分支/邮箱密码输入) | backend/app/routers/auth.py:25(router),:97-117(signup),:119-155(login本地模式123-125) | backend/app/main.py:181(/api/health),:284(SPA fallback)"
+  },
+  {
+    "name": "工作台数据概览",
+    "status": "PASS",
+    "error": "",
+    "code": "frontend/src/components/Dashboard.jsx:24-193(Dashboard/StatCard四张统计卡63-66) | frontend/src/App.jsx:28-103(路由表) | backend/app/main.py:204-209(/api/stats get_stats)"
+  },
+  {
+    "name": "科目管理-新建编辑删除",
+    "status": "PASS",
+    "error": "",
+    "code": "frontend/src/components/SubjectManager.jsx:24-231(handleSubmit43/startEdit72/handleDelete87双击确认/列表195) | backend/app/routers/subjects.py:16(router),:56-109(list/create/get/update/delete级联)"
+  },
+  {
+    "name": "笔记新建与保存",
+    "status": "PASS",
+    "error": "",
+    "code": "frontend/src/components/NoteEditor.jsx:31-225(state47-51/handleSave88/字段映射97-107) | frontend/src/components/NotesList.jsx:23-268(列表渲染) | backend/app/routers/notes.py:26-57(NoteCreate schema),:86-166(list/create/get/update/delete)"
+  },
+  {
+    "name": "笔记AI分析",
+    "status": "PASS",
+    "error": "",
+    "code": "frontend/src/components/NoteEditor.jsx:133-406(handleAnalyze133/AI面板238/分析按钮331) | backend/app/routers/ai.py:146-170(analyze_content离线规则分析+suggest)"
+  },
+  {
+    "name": "笔记列表与生成导航",
+    "status": "PASS",
+    "error": "",
+    "code": "frontend/src/components/NotesList.jsx:23-254(toggleSelect54/toggleSelectAll67/handleBatchGenerate79/批量生成按钮132/单笔记生成导航254) | backend/app/routers/ai.py:255-343(generate_all/batch_generate需LLM)"
+  },
+  {
+    "name": "产品生成器-推荐与已生成产品",
+    "status": "PASS",
+    "error": "",
+    "code": "frontend/src/components/ProductGenerator.jsx:36-406(loadData56/handleFastGenerate118/handleAutoPlan96/handlePlan78/规划卡片218/一键生成394) | backend/app/routers/ai.py:175-260(generate/generate-all),:372-450(generate_plan/generate_from_plan),:498-534(fast_generate)"
+  },
+  {
+    "name": "产品库-筛选与发布",
+    "status": "PASS",
+    "error": "",
+    "code": "frontend/src/components/ProductLibrary.jsx:31-182(filter38/handlePublish61/handleDelete72/筛选器97/发布177) | backend/app/routers/products.py:18(router),:107-161(list/get/create/update/delete)"
+  },
+  {
+    "name": "产品详情-导出与编辑",
+    "status": "PASS",
+    "error": "",
+    "code": "frontend/src/components/ProductViewer.jsx:36-225(findProduct56/handleExport69/handlePublish108/handleSaveEdit119/handleCopy131/导出复制按钮189-193) | backend/app/routers/products.py:129-161(get/update/delete) | backend/app/routers/ai.py:535(regenerate需LLM)"
+  },
+  {
+    "name": "LLM设置-配置与激活",
+    "status": "PASS",
+    "error": "",
+    "code": "frontend/src/components/Settings.jsx:29-357(loadData55/openNew68/handleProviderChange95/handleSave101/handleActivate125/handleTest148/新增按钮174) | backend/app/routers/config.py:37(router),:118-332(list/active/set_active/create/update/delete/test/get_providers)"
+  }
+]

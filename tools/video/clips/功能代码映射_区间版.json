@@ -1,0 +1,105 @@
+[
+  {
+    "feature": "登录与鉴权",
+    "video": "clips/登录与鉴权.mp4",
+    "status": "PASS",
+    "code_segments": [
+      "frontend/src/components/AuthGate.jsx:15-170(AuthGate)",
+      "backend/app/routers/auth.py:97-114(signup)",
+      "backend/app/routers/auth.py:119-132(login)",
+      "backend/app/main.py:186-197(root)"
+    ]
+  },
+  {
+    "feature": "工作台数据概览",
+    "video": "clips/工作台数据概览.mp4",
+    "status": "PASS",
+    "code_segments": [
+      "frontend/src/components/Dashboard.jsx:24-189(Dashboard)",
+      "backend/app/main.py:209-254(get_stats)"
+    ]
+  },
+  {
+    "feature": "科目管理-新建编辑删除",
+    "video": "clips/科目管理-新建编辑删除.mp4",
+    "status": "PASS",
+    "code_segments": [
+      "frontend/src/components/SubjectManager.jsx:24-244(SubjectManager)",
+      "backend/app/routers/subjects.py:65-72(create_subject)",
+      "backend/app/routers/subjects.py:56-60(list_subjects)",
+      "backend/app/routers/subjects.py:92-103(update_subject)",
+      "backend/app/routers/subjects.py:109-118(delete_subject)"
+    ]
+  },
+  {
+    "feature": "笔记新建与保存",
+    "video": "clips/笔记新建与保存.mp4",
+    "status": "PASS",
+    "code_segments": [
+      "frontend/src/components/NoteEditor.jsx:31-437(NoteEditor)",
+      "frontend/src/components/NotesList.jsx:23-288(NotesList)",
+      "backend/app/routers/notes.py:110-124(create_note)",
+      "backend/app/routers/notes.py:148-161(update_note)"
+    ]
+  },
+  {
+    "feature": "笔记AI分析",
+    "video": "clips/笔记AI分析.mp4",
+    "status": "PASS",
+    "code_segments": [
+      "frontend/src/components/NoteEditor.jsx:31-437(NoteEditor)",
+      "backend/app/routers/ai.py:145-170(analyze_content)"
+    ]
+  },
+  {
+    "feature": "笔记列表与生成导航",
+    "video": "clips/笔记列表与生成导航.mp4",
+    "status": "PASS",
+    "code_segments": [
+      "frontend/src/components/NotesList.jsx:23-288(NotesList)",
+      "backend/app/routers/ai.py:255-272(generate_all_products)"
+    ]
+  },
+  {
+    "feature": "产品生成器-推荐与已生成产品",
+    "video": "clips/产品生成器-推荐与已生成产品.mp4",
+    "status": "PASS",
+    "code_segments": [
+      "frontend/src/components/ProductGenerator.jsx:36-455(ProductGenerator)",
+      "backend/app/routers/ai.py:497-519(fast_generate)",
+      "backend/app/routers/ai.py:371-437(generate_plan)",
+      "backend/app/routers/ai.py:175-250(generate_products)"
+    ]
+  },
+  {
+    "feature": "产品库-筛选与发布",
+    "video": "clips/产品库-筛选与发布.mp4",
+    "status": "PASS",
+    "code_segments": [
+      "frontend/src/components/ProductLibrary.jsx:31-195(ProductLibrary)",
+      "backend/app/routers/products.py:85-102(list_products)",
+      "backend/app/routers/products.py:144-155(update_product)"
+    ]
+  },
+  {
+    "feature": "产品详情-导出与编辑",
+    "video": "clips/产品详情-导出与编辑.mp4",
+    "status": "PASS",
+    "code_segments": [
+      "frontend/src/components/ProductViewer.jsx:36-244(ProductViewer)",
+      "backend/app/routers/products.py:129-139(get_product)",
+      "backend/app/routers/products.py:144-155(update_product)"
+    ]
+  },
+  {
+    "feature": "LLM设置-配置与激活",
+    "video": "clips/LLM设置-配置与激活.mp4",
+    "status": "PASS",
+    "code_segments": [
+      "frontend/src/components/Settings.jsx:29-383(Settings)",
+      "backend/app/routers/config.py:189-212(create_config)",
+      "backend/app/routers/config.py:169-184(set_active_config)",
+      "backend/app/routers/config.py:262-327(test_connection)"
+    ]
+  }
+]

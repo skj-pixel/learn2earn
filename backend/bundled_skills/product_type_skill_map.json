@@ -1,0 +1,77 @@
+{
+  "_comment": "14 种对外产品类型 → 已打包技能（来自 knowledge_skills_all.zip）的推荐映射。skill 名称取 SKILL.md frontmatter 的 name 字段，与 installed_skills.name 对齐，便于运行时按名称匹配。",
+  "version": "1.0",
+  "bundled_zip": "workbuddy_skills_all.zip",
+  "mapping": {
+    "article": {
+      "label": "技术文章/公众号推文",
+      "skills": ["wechat-article-pro", "humanizer", "content-factory"],
+      "rationale": "wechat-article-pro 产出公众号深度长文；humanizer 去 AI 味；content-factory 的 Writer 角色可批量改写多平台版本。"
+    },
+    "ppt": {
+      "label": "PPT",
+      "skills": ["guizang-ppt-skill", "pptx-generator"],
+      "rationale": "guizang-ppt-skill 生成横向翻页网页 PPT（含 WebGL 背景/数据大字报）；pptx-generator 产出可编辑 .pptx。"
+    },
+    "sop": {
+      "label": "SOP流程文档",
+      "skills": ["fbs-bookwriter", "Word / DOCX", "md-to-pdf-cjk"],
+      "rationale": "fbs-bookwriter 擅长手册/SOP 长文档结构；word-docx 出 Word 版；md-to-pdf-cjk 出带目录的中文 PDF。"
+    },
+    "prompt_template": {
+      "label": "AI提示词模板",
+      "skills": ["skill-creator", "self-improvement", "Self-Improving + Proactive Agent"],
+      "rationale": "skill-creator 把提示词工作流封装成可复用 Skill；self-improving 系列负责迭代优化提示词效果。"
+    },
+    "course_outline": {
+      "label": "课程大纲/教案",
+      "skills": ["open-lesson", "teachany", "study-planner"],
+      "rationale": "open-lesson 用有向图生成学习计划；teachany 产出 K-12 互动课件；study-planner 拆学习路径。"
+    },
+    "interview_qa": {
+      "label": "面试题库/答案解析",
+      "skills": ["qa-expert", "academic-tutor", "notebooklm-studio"],
+      "rationale": "qa-expert 擅长 QA/测试题库；academic-tutor 给学术/技术题解析；notebooklm-studio 可批量生成测验。"
+    },
+    "workflow": {
+      "label": "工作流程图",
+      "skills": ["knowledge-framework-builder", "ontology", "notion"],
+      "rationale": "knowledge-framework-builder 建知识/流程框架；ontology 建类型化实体关系图；notion 落地为看板/数据库。"
+    },
+    "product_intro": {
+      "label": "产品介绍/分销文案",
+      "skills": ["ecommerce-copywriter", "wechat-article-pro", "promo-creator-skills"],
+      "rationale": "ecommerce-copywriter 写高转化详情页；wechat-article-pro 写软件介绍带货文；promo-creator-skills 做宣传片。"
+    },
+    "quiz": {
+      "label": "自测题/练习题",
+      "skills": ["notebooklm-studio", "qa-expert", "open-lesson"],
+      "rationale": "notebooklm-studio 从内容直接生成测验/练习题；qa-expert 控题型质量；open-lesson 用于分章节出题。"
+    },
+    "mindmap": {
+      "label": "知识思维导图",
+      "skills": ["knowledge-framework-builder", "notebooklm-studio", "ontology"],
+      "rationale": "knowledge-framework-builder 抽取概念层级；notebooklm-studio 生成导图；ontology 表达概念依赖。"
+    },
+    "checklist": {
+      "label": "行动清单/避坑指南",
+      "skills": ["note-organizer", "task-alignment", "plan-tracker"],
+      "rationale": "note-organizer 整理要点为清单；task-alignment 排优先级；plan-tracker 跟踪执行。"
+    },
+    "flashcard": {
+      "label": "记忆卡片/Anki",
+      "skills": ["notebooklm-studio", "obsidian", "study-planner"],
+      "rationale": "notebooklm-studio 直接产闪卡；obsidian 卡片笔记库管理；study-planner 安排复习节奏。"
+    },
+    "script": {
+      "label": "视频脚本",
+      "skills": ["content-factory", "content-repurposer", "gui-demo-video", "remotion-video-toolkit"],
+      "rationale": "content-factory 的 Scriptwriter 角色写脚本；content-repurposer 长文转视频脚本；gui-demo-video / remotion 录制成片。"
+    },
+    "llm_skill": {
+      "label": "LLM Skill",
+      "skills": ["skill-creator", "self-improvement", "skill-vetter"],
+      "rationale": "skill-creator 把工作流封装成 Skill 包；self-improvement 持续优化；skill-vetter 做安全审查后再发布。"
+    }
+  }
+}

@@ -1,0 +1,8 @@
+# MemoryBear 依赖
+# 核心模块仅依赖 Python 标准库（sqlite3, threading, json, re, hashlib, dataclasses 等）
+# 无需额外 pip 安装即可运行
+
+# 可选依赖（如需向量化检索）
+# numpy>=1.24.0
+# scikit-learn>=1.3.0
+（内容由AI生成，仅供参考）

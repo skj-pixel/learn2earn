@@ -1,0 +1,141 @@
+# Secrets and licenses
+*.enc
+LICENSE.json
+security/keys/
+llm-api-keys.env
+llm-api-keys.json
+secrets.*
+backend/app/services/llm_config.json
+
+# Dependencies and virtual environments
+node_modules/
+frontend/node_modules/
+.venv/
+.venv_bak*/
+.venv_old*/
+.venv*/
+venv/
+env/
+work_verify_venv/
+backend/learn2earn/
+
+# Database files (local + per-version)
+storage/memory-bear-v3/
+storage/note-assets/
+backend/learn2earn.db
+backend/*.db
+backend/*.db-*
+backend/**/*.db
+
+# Python and test caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Frontend and runtime build output
+frontend/dist/
+frontend/dist_verify/
+frontend/dist_tmp_build/
+dist/
+backend/app/*.db
+backend/app/*.db-*
+backend/app/*.bak*
+*.log
+*.pid
+.waylog/
+learn2earn_local_server.*
+storage/note-assets/
+storage/skills/
+
+# Generated bulk artifacts from prior agents/runs
+cc0726out/
+marvis0726out/
+workbuddy0726out/
+workbuddy0810out/
+TRAE_work_0726out/
+reports/
+output/
+work/
+.playwright-cli/
+.meoo/
+.waylog/
+
+# Test/debug logs and throwaway scripts (per-prefix _)
+_*.log
+_*.pid
+_*.env
+_*.txt
+_*.json
+_*.yaml
+_*.yml
+_*.ps1
+_*.py
+
+# Hangzhou contest intermediate artifacts
+hangzhou_contest_交付物_V5.1.2/
+
+# Temporary backups and snapshots
+*.bak
+*.bak_*
+*.tmp
+*.swp
+*.swo
+*.orig
+*.rej
+
+# Large binary deliverables are added explicitly when needed
+*.mp4
+*.webm
+*.wav
+*.zip
+*.pdf
+!docs/**/*.pdf
+!hangzhou_contest/**/*.pdf
+
+# Frontend dist (rebuilt by prepare_local_demo_once.ps1)
+frontend/dist/
+frontend/dist_tmp_build/
+frontend/dist_verify/
+
+# Built artifacts
+tools/video/_tmp/
+tools/video/clips/_deprecated/
+
+# IDE / OS
+.vscode/
+.idea/
+*.iml
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Misc interactive state
+docs.zip
+MemoryBear-main.zip
+memory_bear_py.zip
+start_uvicorn.py
+fix_*.py
+fix_colons.py
+fix_fstring.py
+generate_*.py
+serve_all.py
+import_*.err
+import_*.out
+import_*.txt
+launcher_*.log
+launcher_*.md
+v53_*.log
+backend_*.log
+codex_*.log
+_ai_*.log
+_anaconda_*.log
+*.launcher.*
+agent_*.log
+db_*.log
+Learn2Earn_*.mp4
+
+# User strategy preferences (per-product-type overrides)
+backend/app/services/strategy_preferences.json
+
