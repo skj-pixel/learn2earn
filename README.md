@@ -1,10 +1,10 @@
-# Learn2Earn — V5.1.3 Bugfix2 发行版
+# Learn2Earn — V5.1.3 统计与并发读取修复版
 
 > **边学边生产知识付费产品** — 把学习过程直接变成可计价、可发布的赚钱过程。
 >
-> 杭州 AI 教育赛道 · 五层长期记忆 · 14 种产品形态 · 三段式 Agent 流水线
+> 杭州 AI 教育赛道 · 五层长期记忆 · 14 种产品形态 · 三段式 Agent 流水线 · 统计与并发读取隔离
 
-[![Version](https://img.shields.io/badge/version-V5.1.3--Bugfix2-green)](#) [![Backend](https://img.shields.io/badge/backend-FastAPI-009688)](#) [![Frontend](https://img.shields.io/badge/frontend-React%2018-61DAFB)](#) [![Python](https://img.shields.io/badge/python-3.10%2B-3776AB)](#) [![License: BUSL 1.1](https://img.shields.io/badge/license-BUSL--1.1-orange.svg)](./LICENSE)
+[![Version](https://img.shields.io/badge/version-V5.1.3--%E7%BB%9F%E8%AE%A1%E4%B8%8E%E5%B9%B6%E5%8F%91%E8%AF%BB%E5%8F%96%E4%BF%AE%E5%A4%8D%E7%89%88-green)](#) [![Backend](https://img.shields.io/badge/backend-FastAPI-009688)](#) [![Frontend](https://img.shields.io/badge/frontend-React%2018-61DAFB)](#) [![Python](https://img.shields.io/badge/python-3.10%2B-3776AB)](#) [![License: BUSL 1.1](https://img.shields.io/badge/license-BUSL--1.1-orange.svg)](./LICENSE)
 
 ---
 
@@ -24,6 +24,7 @@ Learn2Earn 是一个面向自学者 / 知识工作者 / 高校学生的 AI 辅�
 - **多 LLM 兼容**：内置 OpenRouter / ModelScope / 硅基流动 / 自定义 6 家 provider
 - **Skill 插件系统**：每种产品类型独立配置推荐技能包
 - **历史数据隔离**：每个版本独立数据库（`%LOCALAPPDATA%\Learn2Earn\version-data\`）
+- **统计与并发读取隔离**（V5.1.3 特性）：仪表盘统计查询与生成期读取互不阻塞
 
 ---
 
@@ -57,10 +58,10 @@ Learn2Earn 是一个面向自学者 / 知识工作者 / 高校学生的 AI 辅�
 ├── migrations/              # Alembic 数据库迁移
 ├── tests_minimal/           # 离线快速测试
 ├── tools/                   # 工具脚本
-├── 启动Learn2Earn-V5.1.3-Bugfix2版.bat  ← **你点开要用的**
+├── 启动Learn2Earn-V5.1.3统计与并发读取修复版.bat  ← **你点开要用的**
 ├── 启动Learn2Earn本地演示版.bat
 ├── 停止Learn2Earn本地演示版.bat
-├── 首次准备依赖和构建产物.bat           ← **首次必跑**
+├── 首次准备依赖和构建产物.bat                   ← **首次必跑**
 └── requirements.txt
 ```
 
@@ -107,11 +108,13 @@ cd Learn2Earn
 
 ### 4. 启动服务
 
-双击 **启动Learn2Earn-V5.1.3-Bugfix2版.bat**。
+双击 **启动Learn2Earn-V5.1.3统计与并发读取修复版.bat**。
 
 - 后端自动监听 9000-9010 之间首个空闲端口
 - 浏览器自动打开 `http://127.0.0.1:<port>/`
 - 窗口保持打开状态，关窗口即停服务
+
+> ⚙️ 启动后 WebUI 直接展示已包含的演示数据：33 个科目 / 30 篇笔记 / 103 个产品 / 40 个生成任务 / 904 条已安装技能记录。无需手动创建样例即可上手测试。
 
 ### 5. 配置 LLM（必做）
 
